@@ -1,0 +1,30 @@
+stages:
+  - build
+  - test
+  - sast
+
+# Optional build stage (if you have Docker build or tests)
+build:
+  stage: build
+  script:
+    - echo "Build stage placeholder"
+
+# Optional test stage
+test:
+  stage: test
+  script:
+    - echo "Test stage placeholder"
+
+# SAST scan stage
+sast_scan:
+  stage: sast
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    SONAR_HOST_URL: "http://10.0.2.15:9000"
+    SONAR_LOGIN: "$SONAR_TOKEN"  # store token as GitLab CI/CD variable
+  script:
+    - sonar-scanner -Dsonar.projectKey=myapp -Dsonar.sources=.
+  allow_failure: false  # enforce failing pipeline on critical issues
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
